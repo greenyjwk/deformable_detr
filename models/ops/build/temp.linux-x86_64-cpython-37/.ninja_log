@@ -1,0 +1,4 @@
+# ninja log v6
+39	5073	1740170690467134000	/mnt/storage/ji/Deformable-DETR/models/ops/build/temp.linux-x86_64-cpython-37/mnt/storage/ji/Deformable-DETR/models/ops/src/cpu/ms_deform_attn_cpu.o	e41f4907cf4f932d
+50	12003	1740170690483805000	/mnt/storage/ji/Deformable-DETR/models/ops/build/temp.linux-x86_64-cpython-37/mnt/storage/ji/Deformable-DETR/models/ops/src/cuda/ms_deform_attn_cuda.o	e6226fb5d51b624d
+67	19053	1740170690495141000	/mnt/storage/ji/Deformable-DETR/models/ops/build/temp.linux-x86_64-cpython-37/mnt/storage/ji/Deformable-DETR/models/ops/src/vision.o	a965523c7201e7d6

@@ -7,7 +7,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 # ------------------------------------------------------------------------
 
-
+import sys
 import argparse
 import datetime
 import json
@@ -22,6 +22,8 @@ import datasets
 import util.misc as utils
 import datasets.samplers as samplers
 from datasets import build_dataset, get_coco_api_from_dataset
+# from datasets.coco import build_dataset
+from datasets.coco import build
 from engine import evaluate, train_one_epoch
 from models import build_model
 
@@ -33,9 +35,9 @@ def get_args_parser():
     parser.add_argument('--lr_backbone', default=2e-5, type=float)
     parser.add_argument('--lr_linear_proj_names', default=['reference_points', 'sampling_offsets'], type=str, nargs='+')
     parser.add_argument('--lr_linear_proj_mult', default=0.1, type=float)
-    parser.add_argument('--batch_size', default=2, type=int)
+    parser.add_argument('--batch_size', default=1, type=int)
     parser.add_argument('--weight_decay', default=1e-4, type=float)
-    parser.add_argument('--epochs', default=50, type=int)
+    parser.add_argument('--epochs', default=100, type=int)
     parser.add_argument('--lr_drop', default=40, type=int)
     parser.add_argument('--lr_drop_epochs', default=None, type=int, nargs='+')
     parser.add_argument('--clip_max_norm', default=0.1, type=float,
@@ -107,7 +109,9 @@ def get_args_parser():
 
     # dataset parameters
     parser.add_argument('--dataset_file', default='coco')
-    parser.add_argument('--coco_path', default='./data/coco', type=str)
+    # parser.add_argument('--coco_path', default='./data/coco', type=str)
+    parser.add_argument('--coco_path', default='/mnt/storage/ji/data_detr_cmb_only', type=str)
+    
     parser.add_argument('--coco_panoptic_path', type=str)
     parser.add_argument('--remove_difficult', action='store_true')
 
@@ -151,7 +155,8 @@ def main(args):
 
     dataset_train = build_dataset(image_set='train', args=args)
     dataset_val = build_dataset(image_set='val', args=args)
-
+    # sys.exit()
+    
     if args.distributed:
         if args.cache_mode:
             sampler_train = samplers.NodeDistributedSampler(dataset_train)

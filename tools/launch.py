@@ -184,8 +184,7 @@ def main():
     for process in processes:
         process.wait()
         if process.returncode != 0:
-            raise subprocess.CalledProcessError(returncode=process.returncode,
-                                                cmd=process.args)
+            raise subprocess.CalledProcessError(returncode=process.returncode, cmd=process.args)
 
 
 if __name__ == "__main__":
