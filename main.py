@@ -14,6 +14,8 @@ import json
 import random
 import time
 from pathlib import Path
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 import numpy as np
 import torch
@@ -26,7 +28,8 @@ from datasets import build_dataset, get_coco_api_from_dataset
 from datasets.coco import build
 from engine import evaluate, train_one_epoch
 from models import build_model
-
+# from torch.utils.tensorboard import SummaryWriter
+# from tensorboardX import SummaryWriter
 
 def get_args_parser():
     parser = argparse.ArgumentParser('Deformable DETR Detector', add_help=False)
@@ -42,7 +45,6 @@ def get_args_parser():
     parser.add_argument('--lr_drop_epochs', default=None, type=int, nargs='+')
     parser.add_argument('--clip_max_norm', default=0.1, type=float,
                         help='gradient clipping max norm')
-
 
     parser.add_argument('--sgd', action='store_true')
 
@@ -131,6 +133,7 @@ def get_args_parser():
 
 
 def main(args):
+    # writer = SummaryWriter(Path(args.output_dir) / "runs/deformable_detr_experiment")
     utils.init_distributed_mode(args)
     print("git:\n  {}\n".format(utils.get_sha()))
 

@@ -24,7 +24,7 @@ from datasets.data_prefetcher import data_prefetcher
 
 def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
                     data_loader: Iterable, optimizer: torch.optim.Optimizer,
-                    device: torch.device, epoch: int, max_norm: float = 0):
+                    device: torch.device, epoch: int, max_norm: float = 0, writer=None):
     model.train()
     criterion.train()
     metric_logger = utils.MetricLogger(delimiter="  ")
@@ -37,8 +37,11 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
     prefetcher = data_prefetcher(data_loader, device, prefetch=True)
     samples, targets = prefetcher.next()
 
+    total_loss = 0.0
+    num_batches = len(data_loader)
+
     # for samples, targets in metric_logger.log_every(data_loader, print_freq, header):
-    for _ in metric_logger.log_every(range(len(data_loader)), print_freq, header):
+    for i, _ in enumerate(metric_logger.log_every(range(len(data_loader)), print_freq, header)):
         outputs = model(samples)
         loss_dict = criterion(outputs, targets)
         weight_dict = criterion.weight_dict
@@ -53,6 +56,7 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         losses_reduced_scaled = sum(loss_dict_reduced_scaled.values())
 
         loss_value = losses_reduced_scaled.item()
+        total_loss += loss_value
 
         if not math.isfinite(loss_value):
             print("Loss is {}, stopping training".format(loss_value))
@@ -61,6 +65,7 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
 
         optimizer.zero_grad()
         losses.backward()
+        
         if max_norm > 0:
             grad_total_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm)
         else:
@@ -73,6 +78,12 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         metric_logger.update(grad_norm=grad_total_norm)
 
         samples, targets = prefetcher.next()
+    
+    avg_loss = total_loss / num_batches
+    
+    if writer is not None:
+        writer.add_scalar("Loss/train", avg_loss, epoch)
+    
     # gather the stats from all processes
     metric_logger.synchronize_between_processes()
     print("Averaged stats:", metric_logger)

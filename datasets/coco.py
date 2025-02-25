@@ -14,6 +14,7 @@ Mostly copy-paste from https://github.com/pytorch/vision/blob/13b35ff/references
 """
 from pathlib import Path
 
+import sys
 import torch
 import torch.utils.data
 from pycocotools import mask as coco_mask
@@ -156,7 +157,6 @@ def make_coco_transforms(image_set):
 
 def build(image_set, args):
     root = Path(args.coco_path)
-    print(root)
     assert root.exists(), f'provided COCO path {root} does not exist'
     mode = 'instances'
     # PATHS = {

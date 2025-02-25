@@ -7,6 +7,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 # ------------------------------------------------------------------------
 
+import sys
 import torch.utils.data
 from .torchvision_datasets import CocoDetection
 from datasets.coco import build as build_coco
